@@ -54,19 +54,11 @@ blue = 0
 #Player
 playerone = True
 
-#set the game time
-clock = pygame.time.Clock()
-FPS = 30
-playtime = 0.0
 
 #start programm
 runprogramm = True
 
 while runprogramm:
-    #let the playtime run
-    milliseconds = clock.tick(FPS)
-    playtime += milliseconds/1000.0
-
     #eventlistener
     for event in pygame.event.get():
         if pygame.mouse.get_pressed():
@@ -118,13 +110,12 @@ while runprogramm:
                 runprogramm = False
 
     #set text at the end of the game
-    text = "FPS: {0:.2f}   Playtime: {1:.2f}".format(clock.get_fps(), playtime)
-    pygame.display.set_caption(text)
+
+
     pygame.display.flip()
 pygame.quit()
 #end of game
-print("This game was played for {0:2f} seconds".format(playtime))
-
+print("End of Game")
 
 
 
