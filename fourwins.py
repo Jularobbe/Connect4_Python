@@ -3,8 +3,8 @@ import pygame
 pygame.init()
 
 #set the screen size, gridsize and chipsize (radius)
-sqramountwidth = 10
-sqramountheight = 8
+sqramountwidth = 5
+sqramountheight = 4
 squaresize = 80
 width = sqramountwidth * squaresize
 height = sqramountheight * squaresize
@@ -22,6 +22,29 @@ for i in range (0,width,squaresize):
     pygame.draw.rect(background, (0,0,0),(i,0,0,width))
     pygame.draw.rect(background, (0,0,0),(0,i,width,0))
 screen.blit(background, (0, 0))
+
+d = {
+    11:0,
+    12:0,
+    13:0,
+    14:0,
+    15:0,
+    21:0,
+    22:0,
+    23:0,
+    24:0,
+    25:0,
+    31:0,
+    32:0,
+    33:0,
+    34:0,
+    35:0,
+    41:0,
+    42:0,
+    43:0,
+    44:0,
+    45:0
+}
 
 #colors
 red = 0
@@ -57,11 +80,30 @@ while runprogramm:
 
                 #swtitch players
                 if playerone == True:
+                    blue = 255
                     red = 0
                     playerone = False
+
                 else:
+                    blue = 0
                     red = 250
                     playerone = True
+
+                if x == squaremid and playerone == True:
+                    j=1
+                    k=1
+                    i=j*10+k
+                    d[i]=1
+                    print(d[i])
+                if d[11]== 1 and x == squaremid:
+                    y = height - squaremid*3
+                if x == squaremid and playerone == False:
+                    j=1
+                    k=1
+                    i=j*10+k
+                    d[i]=2
+                    print(d[i])
+
                 pygame.draw.circle(background, (red, green, blue), (x,y),radius)
 
                 screen.blit(background, (0, 0))
