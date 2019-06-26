@@ -1,3 +1,5 @@
+import tkinter
+
 import pygame
 
 pygame.init()
@@ -109,12 +111,9 @@ while runprogramm:
         elif event.type == pygame.QUIT:
                 runprogramm = False
 
-    #set text at the end of the game
-
-
     pygame.display.flip()
 pygame.quit()
-#end of game
+#set text at the end of the game
 print("End of Game")
 
 
