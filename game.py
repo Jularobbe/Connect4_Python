@@ -3,7 +3,6 @@ import pygame
 
 class Connect4:
     def __init__(self, board_width, board_height):
-        print("Setting up the board.")
         board = self.generate_grid_dict(board_width, board_height)
 
         self.red = 250
@@ -36,8 +35,6 @@ class Connect4:
         for i in range(self.height//80 + 1):
             self.draw_dict_mapping[i] = self.height//80 - i
 
-        print(self.draw_dict_mapping)
-
         self.run_game(board)
 
     def generate_grid_dict(self, height, width):
@@ -65,8 +62,6 @@ class Connect4:
                         draw_x = x - (x % self.squaresize) + self.squaremid
 
                         x = x // 80
-
-                        print(self.check_if_column_full(board, x))
 
                         if self.check_if_column_full(board, x):
                             break
@@ -105,8 +100,6 @@ class Connect4:
 
             pygame.display.flip()
         pygame.quit()
-        # set text at the end of the game
-        print("End of Game")
 
     def switch_player(self):
         '''Switches between player One and Two when function is called'''
