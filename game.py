@@ -4,7 +4,7 @@ import pygame
 class Connect4:
     def __init__(self, board_width, board_height):
         print("Setting up the board.")
-        board = self.generateGridDict(board_width, board_height)
+        board = self.generate_grid_dict(board_width, board_height)
 
         self.red = 250
         self.blue = 0
@@ -31,9 +31,9 @@ class Connect4:
         self.screen.blit(self.background, (0, 0))
 
         self.playerOne = True
-        self.runGame(board)
+        self.run_game(board)
 
-    def generateGridDict(self, height, width):
+    def generate_grid_dict(self, height, width):
         board = {}
         for i in range(height):
             for j in range(width):
@@ -41,7 +41,7 @@ class Connect4:
                 board[position] = 0
         return board
 
-    def runGame(self, board):
+    def run_game(self, board):
         # start program
         runprogram = True
 
@@ -65,8 +65,8 @@ class Connect4:
                         draw_y = self.height - (self.squaremid * (square + 3))
 
                         if self.playerOne:
+                            # Player Ones turn
                             pos = (x, self.get_y_pos(board, x))
-                            print(pos[1])
                             if pos[1] >= 0:
                                 if board[pos] == 0:
                                     board[pos] = 1
@@ -75,8 +75,9 @@ class Connect4:
                                     print("Position: " + str(draw_x) + ", " + str(draw_y))
                                     self.screen.blit(self.background, (0, 0))
                                     self.check_if_user_won(board, pos)
-                                    self.switchPlayer()
+                                    self.switch_player()
                         elif not self.playerOne:
+                            # Player Twos turn
                             pos = (x, self.get_y_pos(board, x))
                             if board[pos] == 0:
                                 board[pos] = 2
@@ -85,7 +86,7 @@ class Connect4:
                                 print("Position: " + str(draw_x) + ", " + str(draw_y))
                                 self.screen.blit(self.background, (0, 0))
                                 self.check_if_user_won(board, pos)
-                                self.switchPlayer()
+                                self.switch_player()
 
 
 
@@ -103,7 +104,8 @@ class Connect4:
         # set text at the end of the game
         print("End of Game")
 
-    def switchPlayer(self):
+    def switch_player(self):
+        '''Switches between player One and Two when function is called'''
         if self.playerOne:
             self.red = 0
             self.blue = 255
@@ -114,6 +116,7 @@ class Connect4:
             self.playerOne = True
 
     def get_y_pos(self, board, x):
+        '''Get available/free yPos at selected xPos'''
         for i in reversed(range(self.height//80)):
             if(self.check_pos(board, x, i)):
                 return i
@@ -121,6 +124,7 @@ class Connect4:
             pass
 
     def check_pos(self, board, x, i):
+        '''Help method to check, whether a selected position is occupied'''
         temp = board[(int(x), int(i))]
         if board[(int(x), int(i))] == 0:
             return True
@@ -128,6 +132,7 @@ class Connect4:
             return False
 
     def check_if_board_full(self, board, pos):
+        '''Checks if board is full in case of a draw'''
         for i in range(self.height // 80):
             for j in range(self.width // 80):
                 if (board[(j, i)] == 0):
@@ -140,22 +145,32 @@ class Connect4:
         print("Board full! :(")
         self.game_over(0)
 
-
     def check_if_user_won(self, board, pos):
+        '''Logic which first, checks if theres a draw to save resources and if not, it will check if a player has 4 in a row.'''
         self.check_if_board_full(board, pos)
 
+        player_has_4 = False
+        winner = 0
+
+        # TODO impl. logic
+
+        if player_has_4:
+            self.game_over(winner)
+
     def column_is_full(self, board, x):
-            for y in reversed(range(self.height // 80)):
-                if (board[(x, y)] == 0):
-                    return False
-                else:
-                    y -= y
-                    continue
+        '''Checks, whether a given column is already full to prevent people placing chips outside of the visible field'''
+        for y in reversed(range(self.height // 80)):
+            if (board[(x, y)] == 0):
+                return False
+            else:
+                y -= y
+                continue
 
             return True
 
     def game_over(self, player_no: int):
         print("Player {} wins!".format(player_no))
+
 
 
 Connect4(8, 6)
