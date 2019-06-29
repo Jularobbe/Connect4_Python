@@ -56,7 +56,7 @@ class Connect4:
 
         while runprogram:
             for event in pygame.event.get():
-                if pygame.mouse.get_pressed():
+                if pygame.mouse.get_pressed() and event.type == pygame.MOUSEBUTTONDOWN:
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         # get position of mouse
                         (x, y) = pygame.mouse.get_pos()
@@ -66,9 +66,9 @@ class Connect4:
 
                         x = x // 80
 
-                        print(self.column_is_full(board, x))
+                        print(self.check_if_column_full(board, x))
 
-                        if self.column_is_full(board, x):
+                        if self.check_if_column_full(board, x):
                             break
 
                         draw_y = self.height - (self.squaresize * self.draw_dict_mapping[self.get_y_pos(board, x)]) + 40
@@ -76,13 +76,12 @@ class Connect4:
                         if self.playerOne:
                             # Player Ones turn
                             pos = (x, self.get_y_pos(board, x))
-                            if pos[1] >= 0:
-                                if board[pos] == 0:
-                                    board[pos] = 1
-                                    pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
-                                    self.screen.blit(self.background, (0, 0))
-                                    self.check_if_user_won(board, pos)
-                                    self.switch_player()
+                            if board[pos] == 0:
+                                board[pos] = 1
+                                pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+                                self.screen.blit(self.background, (0, 0))
+                                self.check_if_user_won(board, pos)
+                                self.switch_player()
                         elif not self.playerOne:
                             # Player Twos turn
                             pos = (x, self.get_y_pos(board, x))
@@ -167,7 +166,7 @@ class Connect4:
 
             self.game_over(winner)
 
-    def column_is_full(self, board, x):
+    def check_if_column_full(self, board, x):
         '''Checks, whether a given column is already full to prevent people placing chips outside of the visible field'''
         for y in reversed(range(self.height // 80)):
             if board[x, 0] != 0:
