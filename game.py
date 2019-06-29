@@ -138,6 +138,7 @@ class Connect4:
                     pass
 
         print("Board full! :(")
+        self.game_over(0)
 
 
     def check_if_user_won(self, board, pos):
@@ -152,5 +153,9 @@ class Connect4:
                     continue
 
             return True
+
+    def game_over(self, player_no: int):
+        print("Player {} wins!".format(player_no))
+
 
 Connect4(8, 6)
