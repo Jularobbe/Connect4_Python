@@ -31,9 +31,17 @@ class Connect4:
         self.screen.blit(self.background, (0, 0))
 
         self.playerOne = True
+
+        self.draw_dict_mapping = {}
+        for i in range(self.height//80 + 1):
+            self.draw_dict_mapping[i] = self.height//80 - i
+
+        print(self.draw_dict_mapping)
+
         self.run_game(board)
 
     def generate_grid_dict(self, height, width):
+        '''Method, which generates the board with a given size'''
         board = {}
         for i in range(height):
             for j in range(width):
@@ -42,6 +50,7 @@ class Connect4:
         return board
 
     def run_game(self, board):
+        '''Main method which starts the game when called'''
         # start program
         runprogram = True
 
@@ -57,12 +66,12 @@ class Connect4:
 
                         x = x // 80
 
+                        print(self.column_is_full(board, x))
+
                         if self.column_is_full(board, x):
                             break
 
-                        square = self.width//80 - self.get_y_pos(board, x) * 2
-
-                        draw_y = self.height - (self.squaremid * (square + 3))
+                        draw_y = self.height - (self.squaresize * self.draw_dict_mapping[self.get_y_pos(board, x)]) + 40
 
                         if self.playerOne:
                             # Player Ones turn
@@ -71,8 +80,6 @@ class Connect4:
                                 if board[pos] == 0:
                                     board[pos] = 1
                                     pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
-                                    print("New circle: {}, {}".format(pos[0], pos[1]))
-                                    print("Position: " + str(draw_x) + ", " + str(draw_y))
                                     self.screen.blit(self.background, (0, 0))
                                     self.check_if_user_won(board, pos)
                                     self.switch_player()
@@ -82,8 +89,6 @@ class Connect4:
                             if board[pos] == 0:
                                 board[pos] = 2
                                 pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
-                                print("New circle: {}, {}".format(pos[0], pos[1]))
-                                print("Position: " + str(draw_x) + ", " + str(draw_y))
                                 self.screen.blit(self.background, (0, 0))
                                 self.check_if_user_won(board, pos)
                                 self.switch_player()
@@ -125,7 +130,6 @@ class Connect4:
 
     def check_pos(self, board, x, i):
         '''Help method to check, whether a selected position is occupied'''
-        temp = board[(int(x), int(i))]
         if board[(int(x), int(i))] == 0:
             return True
         else:
@@ -146,7 +150,7 @@ class Connect4:
         self.game_over(0)
 
     def check_if_user_won(self, board, pos):
-        '''Logic which first, checks if theres a draw to save resources and if not, it will check if a player has 4 in a row.'''
+        '''Logic which first, checks if theres a draw to save resources and if not, it will check if a player has 4 in a row after putting in a chip at the given position'''
         self.check_if_board_full(board, pos)
 
         player_has_4 = False
@@ -155,22 +159,28 @@ class Connect4:
         # TODO impl. logic
 
         if player_has_4:
+
+            if self.playerOne:
+                winner = 1
+            else:
+                winner = 2
+
             self.game_over(winner)
 
     def column_is_full(self, board, x):
         '''Checks, whether a given column is already full to prevent people placing chips outside of the visible field'''
         for y in reversed(range(self.height // 80)):
-            if (board[(x, y)] == 0):
+            if board[x, 0] != 0:
+                return True
+            elif board[(x, y)] == 0:
                 return False
             else:
                 y -= y
                 continue
 
-            return True
-
     def game_over(self, player_no: int):
         print("Player {} wins!".format(player_no))
 
 
-
 Connect4(8, 6)
+
