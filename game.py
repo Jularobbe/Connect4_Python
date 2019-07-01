@@ -81,7 +81,7 @@ class Connect4:
                             pos = (x, self.get_y_pos(board, x))
                             if board[pos] == 0:
                                 board[pos] = 1
-                                pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+                                self.draw_circle(draw_x, draw_y, self.playerOne)
                                 self.screen.blit(self.background, (0, 0))
                                 self.check_if_user_won(board, pos, 1)
                                 self.switch_player()
@@ -90,7 +90,7 @@ class Connect4:
                             pos = (x, self.get_y_pos(board, x))
                             if board[pos] == 0:
                                 board[pos] = 2
-                                pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+                                self.draw_circle(draw_x, draw_y, self.playerOne)
                                 self.screen.blit(self.background, (0, 0))
                                 self.check_if_user_won(board, pos, 2)
                                 self.switch_player()
@@ -257,6 +257,17 @@ class Connect4:
 
         print("Board full! :(")
         self.game_over(0)
+
+    def draw_circle(self, draw_x, draw_y, player_one):
+        '''Help method which either draws a red or blue circle at the given position, depending on the player'''
+        if player_one:
+            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
+            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+            pygame.draw.circle(self.background, (self.red, 100, self.blue + 100), (draw_x, draw_y), self.radius - 8)
+        else:
+            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
+            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+            pygame.draw.circle(self.background, (self.red + 100, 100, self.blue), (draw_x, draw_y), self.radius - 8)
 
     def game_over(self, player_no: int):
         '''Method that is called, when a player has 4 in a row or the board is full.'''
