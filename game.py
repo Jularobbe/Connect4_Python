@@ -1,6 +1,7 @@
 import pygame
 import pygame.freetype
 
+
 class Connect4:
     def __init__(self, board_width, board_height):
         """Setup method that is called, when Connect4 object is created."""
@@ -26,9 +27,9 @@ class Connect4:
 
         # build the grid
         for i in range(0, self.width, self.square_size):
-            pygame.draw.rect(self.background, (0, 0, 0), (i, 0, 0, self.width))
+            pygame.draw.rect(self.background, (0, 0, 0), (i, 0, 0, self.height))
         for i in range(0, self.height, self.square_size):
-            pygame.draw.rect(self.background, (0, 0, 0), (0, i, self.height, 0))
+            pygame.draw.rect(self.background, (0, 0, 0), (0, i, self.width, 0))
         self.screen.blit(self.background, (0, 0))
 
         # Setup, so player one starts
