@@ -1,5 +1,5 @@
 import pygame
-
+import pygame.freetype
 
 class Connect4:
     def __init__(self, board_width, board_height):
@@ -9,6 +9,7 @@ class Connect4:
 
         pygame.init()
         pygame.display.set_caption('Connect4 - Player 1')
+        self.game_font = pygame.freetype.Font("SF Distant Galaxy.ttf", 40)
 
         # set the screen size, gridsize and chipsize (radius)
         self.square_size = 80
@@ -26,7 +27,8 @@ class Connect4:
         # build the grid
         for i in range(0, self.width, self.square_size):
             pygame.draw.rect(self.background, (0, 0, 0), (i, 0, 0, self.width))
-            pygame.draw.rect(self.background, (0, 0, 0), (0, i, self.width, 0))
+        for i in range(0, self.height, self.square_size):
+            pygame.draw.rect(self.background, (0, 0, 0), (0, i, self.height, 0))
         self.screen.blit(self.background, (0, 0))
 
         # Setup, so player one starts
@@ -112,8 +114,18 @@ class Connect4:
 
             pygame.display.flip()
         # TODO: Add "Player x won" message
-        pygame.time.wait(2000)
+        self.show_win(self.playerOne)
+        pygame.time.wait(5000)
         pygame.quit()
+
+    def show_win(self, playerOne):
+        if playerOne:
+            player_no = 2
+        else:
+            player_no = 1
+        text_surface, rect  = self.game_font.render("Player " + str(player_no) + " wins", (0,0,0))
+        self.screen.blit(text_surface, (self.width/2 -150,self.height/2-20))
+        pygame.display.flip()
 
     def switch_player(self):
         """Switches between player One and Two"""
@@ -287,4 +299,4 @@ class Connect4:
         print("Player {} wins!".format(player_no))
 
 
-Connect4(8, 6)
+Connect4(8, 10)
