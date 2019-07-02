@@ -7,6 +7,7 @@ class Connect4:
         """Setup method that is called, when Connect4 object is created."""
         # Create board using generate_grid_dict method with given width and height.
         board = self.generate_grid_dict(board_width, board_height)
+        self.draw = False
 
         pygame.init()
         pygame.display.set_caption('Connect4 - Player 1')
@@ -90,7 +91,6 @@ class Connect4:
                                 self.screen.blit(self.background, (0, 0))
                                 if self.check_if_user_won(board, pos, 1):
                                     run_program = False
-                                    self.game_over(1)
                                 self.switch_player()
                         else:
                             # Player Twos turn
@@ -101,31 +101,34 @@ class Connect4:
                                 self.screen.blit(self.background, (0, 0))
                                 if self.check_if_user_won(board, pos, 2):
                                     run_program = False
-                                    self.game_over(2)
                                 self.switch_player()
 
                 if event.type == pygame.KEYDOWN:
                     # end the game with escape
                     if event.key == pygame.K_ESCAPE:
+                        self.draw = True
                         run_program = False
 
                 # end the Program with the X in the upper right corner
                 elif event.type == pygame.QUIT:
+                    self.draw = True
                     run_program = False
 
             pygame.display.flip()
-        # TODO: Add "Player x won" message
-        self.show_win(self.playerOne)
+        self.game_over(self.playerOne, self.draw)
         pygame.time.wait(5000)
         pygame.quit()
 
-    def show_win(self, playerOne):
-        if playerOne:
-            player_no = 2
+    def game_over(self, player_one, draw):
+        if draw:
+            win_string = " No winner "
+        elif not player_one:
+            win_string = "Player 1 wins!"
         else:
-            player_no = 1
-        text_surface, rect  = self.game_font.render("Player " + str(player_no) + " wins", (0,0,0))
-        self.screen.blit(text_surface, (self.width/2 -150,self.height/2-20))
+            win_string = "Player 2 wins!"
+        text_surface, rect = self.game_font.render(win_string, (0, 0, 0))
+        self.screen.blit(text_surface, (self.width/2 - 150, self.height/2 - 20))
+        pygame.display.set_caption(win_string)
         pygame.display.flip()
 
     def switch_player(self):
@@ -206,6 +209,7 @@ class Connect4:
             return True
 
         if self.check_if_board_full(board):
+            self.draw = True
             return True
 
     def check_horizontal(self, has_player_got_4, board, pos, player_no):
@@ -238,7 +242,7 @@ class Connect4:
     def check_diagonal(self, has_player_got_4, board, pos, player_no):
         """Checks bottom-left to top-right"""
         for i in range(1, 4):
-            if pos[0] + i < self.height // 80 and pos[1] - i >= 0:
+            if pos[0] + i < self.width // 80 and pos[1] - i >= 0:
                 if board[(pos[0] + i, pos[1] - i)] == player_no:
                     has_player_got_4.add((pos[0] + i, pos[1] - i))
                     print("Added top-right: " + str((pos[0] + i, pos[1] - i)))
@@ -294,10 +298,5 @@ class Connect4:
             pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
             pygame.draw.circle(self.background, (self.red + 100, 100, self.blue), (draw_x, draw_y), self.radius - 8)
 
-    @staticmethod
-    def game_over(player_no: int):
-        """Method that is called, when a player has 4 in a row or the board is full."""
-        print("Player {} wins!".format(player_no))
 
-
-Connect4(8, 10)
+Connect4(8, 6)
