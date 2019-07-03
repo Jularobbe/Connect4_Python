@@ -8,47 +8,53 @@ class Connect4:
         # Create board using generate_grid_dict method with given width and height.
         board = self.generate_grid_dict(board_width, board_height)
         self.draw = False
-
         pygame.init()
+
+        # Set the caption for the board and the font for the win prompt.
         pygame.display.set_caption('Connect4 - Player 1')
         self.game_font = pygame.freetype.Font("SF Distant Galaxy.ttf", 40)
 
-        # set the screen size, gridsize and chipsize (radius)
+        # size of each square of the grid:
         self.square_size = 80
+        # generate board width (amount of squares and square width):
         self.width = board_width * self.square_size
+        # generate board height (amount of squares and square height):
         self.height = board_height * self.square_size
+        # generate the radius of the chips depending on the square size:
         self.radius = int(self.square_size / 4)
+        # find the middle of the square for chip placement:
         self.square_mid = int(self.square_size / 2)
+        # set the screen size with the board width and height:
         self.screen = pygame.display.set_mode((self.width, self.height))
 
-        # fill the screen with a white background
+        # Fill the screen with a white background.
         background = pygame.Surface(self.screen.get_size())
         background.fill((255, 255, 255))
         self.background = background.convert()
 
-        # build the grid
+        # Build the grid.
         for i in range(0, self.width, self.square_size):
             pygame.draw.rect(self.background, (0, 0, 0), (i, 0, 0, self.height))
         for i in range(0, self.height, self.square_size):
             pygame.draw.rect(self.background, (0, 0, 0), (0, i, self.width, 0))
         self.screen.blit(self.background, (0, 0))
 
-        # Setup, so player one starts
+        # Setup, so player one starts.
         self.playerOne = True
         self.red = 250
         self.blue = 0
 
         # Help dict for logic, when drawing a chip. Maps 0 -> size, 1 -> size - 1...
-        # Basically helps with inverted drawing
         self.draw_dict_mapping = {}
         for i in range(self.height//80 + 1):
             self.draw_dict_mapping[i] = self.height//80 - i
 
+        # Start the game with the run game method.
         self.run_game(board)
 
     @staticmethod
     def generate_grid_dict(height, width):
-        """Method, which generates the board with a given size"""
+        """Method, which generates the dict for positioning and win logic with a given size"""
         board = {}
         for i in range(height):
             for j in range(width):
@@ -58,32 +64,32 @@ class Connect4:
 
     def run_game(self, board):
         """Main method which starts the game when called"""
-        # start program
         run_program = True
 
         while run_program:
+            # eventlistener for mouse events
             for event in pygame.event.get():
                 if pygame.mouse.get_pressed() and event.type == pygame.MOUSEBUTTONDOWN:
                     if event.type == pygame.MOUSEBUTTONDOWN:
-                        # get position of mouse
+                        # Get position of mouse.
                         (x, y) = pygame.mouse.get_pos()
 
-                        # set circle position in the middle of the grid_square
+                        # Set circle position in the middle of the grid_square.
                         draw_x = x - (x % self.square_size) + self.square_mid
 
-                        # Calculation to get xPosition from selected Mouse xPosition (480 -> 6)
+                        # Calculation to get xPosition from selected Mouse xPosition.
                         x = x // 80
 
                         # Check if column is full before placing. Break out if that's the case.
                         if self.check_if_column_full(board, x):
                             break
 
-                        # Calculate the yPosition, where the chip should be placed with various helper methods
+                        # Calculate the yPosition, where the chip should be placed with various helper methods.
                         draw_y = self.height - (self.square_size * self.draw_dict_mapping[self.get_y_pos(board, x)]) + 40
 
-                        # Check, which players turn it is
+                        # Check, which players turn it is.
                         if self.playerOne:
-                            # Player Ones turn
+                            # Player Ones turn.
                             pos = (x, self.get_y_pos(board, x))
                             if board[pos] == 0:
                                 board[pos] = 1
@@ -93,7 +99,7 @@ class Connect4:
                                     run_program = False
                                 self.switch_player()
                         else:
-                            # Player Twos turn
+                            # Player Twos turn.
                             pos = (x, self.get_y_pos(board, x))
                             if board[pos] == 0:
                                 board[pos] = 2
@@ -104,45 +110,50 @@ class Connect4:
                                 self.switch_player()
 
                 if event.type == pygame.KEYDOWN:
-                    # end the game with escape
+                    # End the game with escape.
                     if event.key == pygame.K_ESCAPE:
                         self.draw = True
                         run_program = False
 
-                # end the Program with the X in the upper right corner
+                # End the Program with the X in the upper right corner.
                 elif event.type == pygame.QUIT:
                     self.draw = True
                     run_program = False
 
             pygame.display.flip()
         self.game_over(self.playerOne, self.draw)
+        # wait for given time and end the game
         pygame.time.wait(5000)
         pygame.quit()
-
-    def game_over(self, player_one, draw):
-        if draw:
-            win_string = " No winner "
-        elif not player_one:
-            win_string = "Player 1 wins!"
-        else:
-            win_string = "Player 2 wins!"
-        text_surface, rect = self.game_font.render(win_string, (0, 0, 0))
-        self.screen.blit(text_surface, (self.width/2 - 150, self.height/2 - 20))
-        pygame.display.set_caption(win_string)
-        pygame.display.flip()
 
     def switch_player(self):
         """Switches between player One and Two"""
         if self.playerOne:
+            # sets the chip color to blue
             self.red = 0
             self.blue = 255
+            # switch the player to player 2 and change the caption
             self.playerOne = False
             pygame.display.set_caption('Connect4 - Player 2')
         else:
+            # sets the chip color to red
             self.red = 250
             self.blue = 0
+            # switch the player to player 1 and change the caption
             self.playerOne = True
             pygame.display.set_caption('Connect4 - Player 1')
+
+    def draw_circle(self, draw_x, draw_y, player_one):
+        """Help method which either draws a red or blue circle with a black circle around it and a smaller circle in
+        the middle, for 3d effect at the given position, depending on the player"""
+        if player_one:
+            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
+            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+            pygame.draw.circle(self.background, (self.red, 100, self.blue + 100), (draw_x, draw_y), self.radius - 8)
+        else:
+            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
+            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
+            pygame.draw.circle(self.background, (self.red + 100, 100, self.blue), (draw_x, draw_y), self.radius - 8)
 
     def get_y_pos(self, board, x):
         """Get available/free yPos at selected xPos"""
@@ -171,6 +182,19 @@ class Connect4:
             else:
                 y -= y
                 continue
+
+    def check_if_board_full(self, board):
+        """Checks if board is full in case of a draw"""
+        for i in range(self.height // 80):
+            for j in range(self.width // 80):
+                if board[(j, i)] == 0:
+                    return False
+                elif j == self.width // 80:
+                    break
+                else:
+                    pass
+        print("Board full! :(")
+        return True
 
     def check_if_user_won(self, board, pos, player_no):
         """Logic which first, checks if a player has 4 in a row after putting in a chip at the given position. If
@@ -273,30 +297,19 @@ class Connect4:
                 else:
                     break
 
-    def check_if_board_full(self, board):
-        """Checks if board is full in case of a draw"""
-        for i in range(self.height // 80):
-            for j in range(self.width // 80):
-                if board[(j, i)] == 0:
-                    return False
-                elif j == self.width // 80:
-                    break
-                else:
-                    pass
-
-        print("Board full! :(")
-        return True
-
-    def draw_circle(self, draw_x, draw_y, player_one):
-        """Help method which either draws a red or blue circle at the given position, depending on the player"""
-        if player_one:
-            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
-            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
-            pygame.draw.circle(self.background, (self.red, 100, self.blue + 100), (draw_x, draw_y), self.radius - 8)
+    def game_over(self, player_one, draw):
+        """method that is called if 4 chips are in a row, column or in a diagonal sequence"""
+        if draw:
+            win_string = " No winner "
+        elif not player_one:
+            win_string = "Player 1 wins!"
         else:
-            pygame.draw.circle(self.background, (0, 0, 0), (draw_x, draw_y), self.radius + 1)
-            pygame.draw.circle(self.background, (self.red, 0, self.blue), (draw_x, draw_y), self.radius)
-            pygame.draw.circle(self.background, (self.red + 100, 100, self.blue), (draw_x, draw_y), self.radius - 8)
+            win_string = "Player 2 wins!"
+        text_surface, rect = self.game_font.render(win_string, (0, 0, 0))
+        self.screen.blit(text_surface, (self.width/2 - 150, self.height/2 - 20))
+        pygame.display.set_caption(win_string)
+        pygame.display.flip()
 
 
+# Start the game and input the number of columns and rows.
 Connect4(8, 6)
